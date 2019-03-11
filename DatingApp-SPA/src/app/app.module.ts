@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { BsDropdownModule } from 'ngx-bootstrap';
+import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { JwtModule } from '@auth0/angular-jwt';
 
@@ -20,6 +20,8 @@ import { AuthGuard } from './_guard/auth.guard';
 import { UserService } from './_service/user.service';
 import { MembersCardComponent } from './members/members-card/members-card.component';
 import { MembersDetailComponent } from './members/members-detail/members-detail.component';
+import { MembersDetailResolver } from './_resolvers/members-detail.resolver';
+import { MembersListResolver } from './_resolvers/members-list.resolver';
 
 
 export function tokenGetter() {
@@ -45,6 +47,7 @@ export function tokenGetter() {
     HttpClientModule,
     FormsModule,
     BsDropdownModule.forRoot(),
+    TabsModule.forRoot(),
     JwtModule.forRoot({
         config: {
           tokenGetter,
@@ -58,7 +61,9 @@ export function tokenGetter() {
     ErrorInterceptorProvider,
     AlertifyjsService,
     AuthGuard,
-    UserService
+    UserService,
+    MembersDetailResolver,
+    MembersListResolver
   ],
   bootstrap: [AppComponent]
 })
