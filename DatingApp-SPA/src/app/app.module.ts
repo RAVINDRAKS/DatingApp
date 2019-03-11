@@ -17,12 +17,15 @@ import { AlertifyjsService } from './_service/alertifyjs.service';
 import { MembersListComponent } from './members/members-list/members-list.component';
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
-import { AuthGuard } from './_guard/auth.guard';
+import { AuthGuard } from './_guards/auth.guard';
 import { UserService } from './_service/user.service';
 import { MembersCardComponent } from './members/members-card/members-card.component';
 import { MembersDetailComponent } from './members/members-detail/members-detail.component';
 import { MembersDetailResolver } from './_resolvers/members-detail.resolver';
 import { MembersListResolver } from './_resolvers/members-list.resolver';
+import { MembersEditComponent } from './members/members-edit/members-edit.component';
+import { MembersEditResolver } from './_resolvers/members-edit.resolver';
+import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
 
 
 export function tokenGetter() {
@@ -40,7 +43,8 @@ export function tokenGetter() {
     ListsComponent,
     MessagesComponent,
     MembersCardComponent,
-    MembersDetailComponent
+    MembersDetailComponent,
+    MembersEditComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +69,9 @@ export function tokenGetter() {
     AuthGuard,
     UserService,
     MembersDetailResolver,
-    MembersListResolver
+    MembersListResolver,
+    MembersEditResolver,
+    PreventUnsavedChanges
   ],
   bootstrap: [AppComponent]
 })
