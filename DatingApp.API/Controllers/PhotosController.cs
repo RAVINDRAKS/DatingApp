@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -48,14 +49,14 @@ namespace DatingApp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPhotoForUser(int userId, PhotoForCreationDto PhotoForCreationDto)
+        public async Task<IActionResult> AddPhotoForUser(int userId, [FromForm]PhotoForCreationDto photoForCreationDto)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            return Unauthorized();
+                return Unauthorized();
 
             var userFromRepo = await _repo.GetUser(userId);
-            var file = PhotoForCreationDto.File;
-            var uploadResults = new ImageUploadResult();
+            var file = photoForCreationDto.File;
+            var uploadResult = new ImageUploadResult();
 
             if (file.Length > 0)
             {
@@ -67,14 +68,17 @@ namespace DatingApp.API.Controllers
                         Transformation = new Transformation().Width(500).Height(500).Crop("fill").Gravity("face")
                     };
 
-                    uploadResults = _cloudinary.Upload(uploadParams);
+                    uploadResult = _cloudinary.Upload(uploadParams);
                 }
             }
 
-            PhotoForCreationDto.Url = uploadResults.Uri.ToString();
-            PhotoForCreationDto.PublicId = uploadResults.PublicId;
+            photoForCreationDto.Url = uploadResult.Uri.ToString();
+            photoForCreationDto.PublicId = uploadResult.PublicId;
 
-            var photo = _mapper.Map<Photo>(PhotoForCreationDto);
+            var photo = _mapper.Map<Photo>(photoForCreationDto);
+
+            if(!userFromRepo.Photos.Any(u => u.IsMain))
+                photo.IsMain = true;
 
             userFromRepo.Photos.Add(photo);
 
@@ -85,8 +89,67 @@ namespace DatingApp.API.Controllers
             }
 
             return BadRequest("Could not add the photo");
+        }
 
+        [HttpPost("{id}/setMain")]
+        public async Task<IActionResult> SetMainPhoto(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var user = await _repo.GetUser(userId);
+
+            if (!user.Photos.Any(p => p.Id == id))
+                return Unauthorized();
+            var photoFromRepo = await _repo.GetPhoto(id);
+
+            if(photoFromRepo.IsMain)
+                return BadRequest("This is already the main photo");
+
+            var currentMainPhoto = await _repo.GetMainPhotoForUser(userId);
+            currentMainPhoto.IsMain = false;
+            photoFromRepo.IsMain = true;
+
+            if (await _repo.SaveAll())
+                return NoContent();
+
+            return BadRequest("Could not set photo to main");
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePhoto(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var user = await _repo.GetUser(userId);
+
+            if (!user.Photos.Any(p => p.Id == id))
+                return Unauthorized();
+            var photoFromRepo = await _repo.GetPhoto(id);
+
+            if(photoFromRepo.IsMain)
+            return BadRequest("You can't delete your main photo");
+
+            if (photoFromRepo.PublicId != null)
+            {
+                var deleteParams = new DeletionParams(photoFromRepo.PublicId);
+
+                var result = _cloudinary.Destroy(deleteParams);
+
+                if (result.Result == "ok") {
+                    _repo.Delete(photoFromRepo);
+                }                
+            }
             
+            if (photoFromRepo.PublicId != null){
+                _repo.Delete(photoFromRepo);
+            }
+
+            if(await _repo.SaveAll())
+                return Ok();
+
+            return BadRequest("Failed to delete the photo");
         }
 
     }
