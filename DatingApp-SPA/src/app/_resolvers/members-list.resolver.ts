@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { Resolve, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { User } from '../_models/user';
 import { UserService } from '../_service/user.service';
@@ -10,17 +10,20 @@ import { catchError } from 'rxjs/operators';
 
 export class MembersListResolver implements Resolve<User[]> {
 
+  pageNumber = 1;
+  pageSize = 5;
+
   constructor(private userService: UserService,
               private router: Router,
               private alertify: AlertifyjsService) {}
 
 
   resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
-    return this.userService.getUsers().pipe(
+    return this.userService.getUsers(this.pageNumber, this.pageSize).pipe(
       catchError(error => {
-        this.alertify.error('Problem retrieving data')
+        this.alertify.error('Problem retrieving data');
         // tslint:disable-next-line:no-unused-expression
-        this.router.navigate['/home']
+        this.router.navigate['/home'];
         return of (null);
 
       })
