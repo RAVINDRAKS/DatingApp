@@ -17,6 +17,7 @@ export class AuthService {
   currentUser: User;
   photoUrl = new BehaviorSubject<string>('../../assets/user.png');
   currentPhotoUrl = this.photoUrl.asObservable();
+  tempPhoto = '../../assets/user.png';
 
 
   constructor(private http: HttpClient) { }
@@ -41,8 +42,8 @@ export class AuthService {
       );
   }
 
-  register(model: any) {
-    return this.http.post(this.baseUrl + 'register', model);
+  register(user: User) {
+    return this.http.post(this.baseUrl + 'register', user);
   }
 
   loggedIn() {

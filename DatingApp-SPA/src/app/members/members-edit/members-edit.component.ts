@@ -26,18 +26,18 @@ export class MembersEditComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private alertify: AlertifyjsService,
               private userService: UserService,
-              private authServive: AuthService) { }
+              private authService: AuthService) { }
 
   ngOnInit() {
     this.route.data.subscribe(data => {
       // tslint:disable-next-line:no-string-literal
       this.user = data['user'];
-      this.authServive.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl);
+      this.authService.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl);
     });
   }
 
   updateUser() {
-    this.userService.updateUser(this.authServive.decodedToken.nameid, this.user).subscribe(next => {
+    this.userService.updateUser(this.authService.decodedToken.nameid, this.user).subscribe(next => {
       this.alertify.success('Profile updated successfully');
       this.editForm.reset(this.user);
     }, error => {
