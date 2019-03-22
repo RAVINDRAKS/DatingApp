@@ -5,7 +5,7 @@
       </div>
       <div class="col-sm-8">
         <div *ngIf="editForm.dirty" class="alert alert-info">
-          <strong>Information</strong>You have made changes. Any unsaved changes will be lost!
+          <strong>Information:</strong>You have made changes. Any unsaved changes will be lost!
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
               <p>{{user.lastActive | timeAgo}}</p>
             </div>
             <div>
-              <strong>Member since:</strong>
+              <strong>Member Since:</strong>
               <p>{{user.created | date: 'mediumDate'}}</p>
             </div>
           </div>
@@ -47,7 +47,7 @@
                   <textarea name="lookingFor" rows="6" class="form-control" [(ngModel)]="user.lookingFor"></textarea>
                   <h4>Interests</h4>
                   <textarea name="interests" rows="6" class="form-control" [(ngModel)]="user.interests"></textarea>
-                  <h4>Location Details</h4>
+                  <h4>Location Details:</h4>
                   <div class="form-inline">
                     <label for="city">City</label>
                     <input type="text" class="form-control" name="city" [(ngModel)]="user.city">

@@ -32,8 +32,8 @@ export class MembersEditComponent implements OnInit {
     this.route.data.subscribe(data => {
       // tslint:disable-next-line:no-string-literal
       this.user = data['user'];
-      this.authService.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl);
     });
+    this.authService.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl);
   }
 
   updateUser() {
