@@ -23,10 +23,8 @@ export class MessagesComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe(data => {
-      // tslint:disable-next-line:no-string-literal
-      this.messages = data['messages'].result;
-      // tslint:disable-next-line:no-string-literal
-      this.pagination = data['messages'].pagination;
+      this.messages = data.messages.result;
+      this.pagination = data.messages.pagination;
     });
   }
 

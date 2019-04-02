@@ -300,11 +300,6 @@ namespace DatingApp.API.Migrations
 
                     b.HasOne("DatingApp.API.Models.User", "User")
                         .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("DatingApp.API.Models.User")
-                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
